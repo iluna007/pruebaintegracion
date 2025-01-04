@@ -42,11 +42,14 @@ services:
       - "5173:5173"
     depends_on:
       - postgres
-    # volumen comentado para no sobreescribir node_modules:
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Habilita el sondeo para React
     volumes:
       - ./frontend:/app
       - /app/node_modules
     command: ["npm", "run", "dev"]
+    networks:
+      - backend
 
 networks:
   backend:
