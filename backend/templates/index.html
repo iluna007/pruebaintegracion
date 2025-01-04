@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Home - My E-commerce App{% endblock %}
+
+{% block content %}
+    <!-- Banner (Jumbotron Style) -->
+    <div class="bg-light p-5 rounded-lg m-3">
+        <h1 class="display-4">Welcome to My E-commerce Store</h1>
+        <p class="lead">Discover our latest products and enjoy a seamless shopping experience!</p>
+        <a class="btn btn-primary btn-lg" href="/products" role="button">Shop Now</a>
+    </div>
+
+    <!-- Favorite Products Section -->
+    <div class="container mt-5">
+        <h2 class="mb-4">Favorite Products</h2>
+        <div class="row">
+            <!-- Renderizar productos dinámicamente -->
+            {% for product in products %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <!-- Mostrar la primera imagen del producto si existe -->
+                    {% if product.images and product.images|length > 0 %}
+                    <img src="{{ product.images[0].url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/350x150" class="card-img-top" alt="{{ product.name }}">
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description }}</p>
+                        <p class="card-text"><strong>Price: ${{ product.price }}</strong></p>
+                        <!-- Enlace al detalle del producto -->
+                        <a href="{{ url_for('product_page', product_id=product.id) }}" class="btn btn-primary">View Product</a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <p>No products available.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Current Time Section -->
+        <div class="content bg-white p-4 shadow rounded mt-5">
+            <p>Current time: {{ moment().format('LLLL') }}</p>
+        </div>
+
+        <!-- Footer Section -->
+        <footer class="bg-dark text-white text-center py-3 mt-4">
+            <p>&copy; 2024 My E-commerce App. All rights reserved.</p>
+        </footer>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<h1>Checkout</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>SKU</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in cart_items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.product.sku }}</td>
+            <td>{{ item.product.price }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.product.price * item.quantity }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Total a pagar: {{ total_price }}</h3>
+
+<h3>Dirección de Envío</h3>
+<form method="POST" action="{{ url_for('checkout') }}">
+    <!-- Direcciones guardadas -->
+    <div class="form-group">
+        <label for="saved_addresses">Seleccionar dirección guardada</label>
+        <select name="address_id" id="saved_addresses" class="form-control">
+            <option value="">-- Seleccione una dirección --</option>
+            {% for address in saved_addresses %}
+            <option value="{{ address.id }}">
+                {{ address.address_line }}, {{ address.city }}, {{ address.postal_code }} ({{ address.contact_phone }})
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Opción para ingresar una nueva dirección -->
+    <h4>O crear una nueva dirección</h4>
+    <div class="form-group">
+        <label for="address">Dirección</label>
+        <input type="text" class="form-control" id="address" name="address_line">
+    </div>
+    <div class="form-group">
+        <label for="city">Ciudad</label>
+        <input type="text" class="form-control" id="city" name="city">
+    </div>
+    <div class="form-group">
+        <label for="postal_code">Código Postal</label>
+        <input type="text" class="form-control" id="postal_code" name="postal_code">
+    </div>
+    <div class="form-group">
+        <label for="country">País</label>
+        <input type="text" class="form-control" id="country" name="country">
+    </div>
+    <div class="form-group">
+        <label for="phone">Número de Contacto</label>
+        <input type="tel" class="form-control" id="phone" name="contact_phone">
+    </div>
+
+    <button type="submit" class="btn btn-success">Proceder al Pago</button>
+</form>
+{% endblock %}

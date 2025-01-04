@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalles de la Orden #{{ order.id }}{% endblock %}
+
+{% block content %}
+<h1>Detalles de la Orden #{{ order.id }}</h1>
+
+<!-- Información general de la orden -->
+<div class="card mb-3">
+    <div class="card-header">
+        Información de la Orden
+    </div>
+    <div class="card-body">
+        <p><strong>Cliente:</strong> {{ order.user.username }}</p>
+        <p><strong>Correo electrónico:</strong> {{ order.user.email }}</p>
+        <p><strong>Fecha de creación:</strong> {{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+        <p><strong>Total:</strong> ${{ order.total_amount }}</p>
+        <p><strong>Estado de la Orden:</strong> {{ order.status }}</p>
+        <!-- Indicador de si la orden está pagada -->
+        <p><strong>Estado de Pago:</strong> 
+            {% if order.is_paid %}
+                <span class="text-success">Pagada</span>
+            {% else %}
+                <span class="text-danger">No Pagada</span>
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<!-- Detalles de los productos en la orden -->
+<h3>Productos en la Orden</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order_items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>${{ item.price }}</td>
+            <td>${{ item.quantity * item.price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>Total de la Orden: ${{ order.total_amount }}</h4>
+
+<!-- Botón para regresar a la lista de órdenes -->
+<a href="{{ url_for('admin_orders') }}" class="btn btn-secondary">Volver a Órdenes</a>
+
+{% endblock %}

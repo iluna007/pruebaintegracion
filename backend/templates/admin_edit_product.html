@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Producto{% endblock %}
+
+{% block content %}
+<h1>Editar Producto</h1>
+<form method="POST" enctype="multipart/form-data">
+    <!-- Campos del producto -->
+    <div class="mb-3">
+        <label for="name" class="form-label">Nombre</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Descripción</label>
+        <textarea class="form-control" id="description" name="description" required>{{ product.description }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="price" class="form-label">Precio</label>
+        <input type="text" class="form-control" id="price" name="price" value="{{ product.price }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="stock" class="form-label">Stock</label>
+        <input type="number" class="form-control" id="stock" name="stock" value="{{ product.stock }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="stock_threshold" class="form-label">Umbral de stock</label>
+        <input type="number" class="form-control" id="stock_threshold" name="stock_threshold" value="{{ product.stock_threshold }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="category" class="form-label">Categoría</label>
+        <input type="text" class="form-control" id="category" name="category" value="{{ product.category }}" required>
+    </div>
+
+    <!-- Campo para subir imágenes nuevas -->
+    <div class="mb-3">
+        <label for="images" class="form-label">Subir Imágenes</label>
+        <input type="file" class="form-control" id="images" name="images" multiple>
+    </div>
+
+    <!-- Mostrar imágenes actuales si existen con opción de eliminar -->
+    {% if product.images %}
+        <p>Imágenes actuales:</p>
+        <div>
+            {% for image in product.images %}
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <img src="{{ image.url }}" alt="Imagen del producto" style="max-width: 100px; margin-right: 10px;">
+                    <label>
+                        <input type="checkbox" name="delete_images" value="{{ image.id }}">
+                        Eliminar
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+</form>
+{% endblock %}
+

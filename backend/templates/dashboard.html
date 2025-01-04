@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>Welcome to your Dashboard, {{ current_user.username }}!</h1>
+        <p>This is your personalized dashboard where you can manage your account and activities.</p>
+    </div>
+{% endblock %}
+

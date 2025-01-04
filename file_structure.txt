@@ -1,0 +1,88 @@
+.
+├── backend
+│   ├── create_admin.py
+│   ├── delme_dockerfile
+│   ├── Dockerfile_backend
+│   ├── forms.py
+│   ├── __init__.py
+│   ├── models.py
+│   ├── __pycache__
+│   │   ├── forms.cpython-311.pyc
+│   │   ├── __init__.cpython-311.pyc
+│   │   ├── models.cpython-311.pyc
+│   │   └── routes.cpython-311.pyc
+│   ├── requirements.txt
+│   ├── routes.py
+│   ├── static
+│   │   └── styles
+│   └── templates
+│       ├── admin_dashboard.html
+│       ├── admin_edit_product.html
+│       ├── admin_edit_user.html
+│       ├── admin_order_detail.html
+│       ├── admin_orders.html
+│       ├── admin_products.html
+│       ├── admin_stock.html
+│       ├── admin_users.html
+│       ├── base.html
+│       ├── cart.html
+│       ├── checkout.html
+│       ├── dashboard.html
+│       ├── index.html
+│       ├── order_confirmation.html
+│       ├── payment.html
+│       ├── product_details.html
+│       ├── signin.html
+│       └── signup.html
+├── docker-compose.yml
+├── file_structure.txt
+├── frontend
+│   ├── Dockerfile_frontend
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public
+│   │   └── vite.svg
+│   ├── src
+│   │   ├── App.css
+│   │   ├── App.jsx
+│   │   ├── assets
+│   │   ├── index.css
+│   │   └── main.jsx
+│   └── vite.config.js
+├── migrations
+│   ├── alembic.ini
+│   ├── env.py
+│   ├── __pycache__
+│   │   └── env.cpython-311.pyc
+│   ├── README
+│   ├── script.py.mako
+│   └── versions
+│       ├── 7baf69f970cb_initial_migration.py
+│       └── __pycache__
+├── package.json
+├── package-lock.json
+├── __pycache__
+│   └── run.cpython-311.pyc
+├── README.md
+├── run.py
+└── vflask_react
+    ├── bin
+    │   ├── activate
+    │   ├── activate.csh
+    │   ├── activate.fish
+    │   ├── Activate.ps1
+    │   ├── pip
+    │   ├── pip3
+    │   ├── pip3.11
+    │   ├── python -> python3
+    │   ├── python3 -> /home/vant/anaconda3/bin/python3
+    │   └── python3.11 -> python3
+    ├── include
+    │   └── python3.11
+    ├── lib
+    │   └── python3.11
+    ├── lib64 -> lib
+    └── pyvenv.cfg
+
+21 directories, 64 files

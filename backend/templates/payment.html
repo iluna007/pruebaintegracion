@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Pago{% endblock %}
+
+{% block content %}
+<h1>Página de Pago</h1>
+
+<h3>Resumen de la Orden</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in cart_items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.product.price }}</td>
+            <td>{{ item.product.price * item.quantity }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Total a pagar: {{ total_price }}</h3>
+
+<!-- Aquí es donde conectarás con Stripe o el servicio de pago -->
+<form method="POST" action="{{ url_for('process_payment') }}">
+    <button type="submit" class="btn btn-primary">Realizar Pago</button>
+</form>
+
+{% endblock %}

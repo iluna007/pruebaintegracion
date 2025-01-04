@@ -1,0 +1,26 @@
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(128, 128, 128, 0.5); /* Fondo gris semitransparente */
+    border: none; /* Sin borde */
+    border-radius: 50%; /* Forma circular */
+    width: 50px; /* Tamaño de la flecha */
+    height: 50px; /* Tamaño de la flecha */
+}
+
+.carousel-control-prev-icon::after,
+.carousel-control-next-icon::after {
+    color: white; /* Flechas blancas */
+    font-size: 24px; /* Tamaño de la flecha */
+    content: ''; /* Vacío, se mantiene como ícono */
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+    background-color: rgba(128, 128, 128, 0.5); /* Mantener el fondo igual al hacer hover */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    opacity: 1; /* Asegúrate de que las flechas sean completamente visibles */
+}
+

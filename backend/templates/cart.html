@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Carrito{% endblock %}
+
+{% block content %}
+<h1>Tu Carrito</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>SKU</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in cart_items %}
+        <tr data-item-id="{{ item.id }}">
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.product.sku }}</td>
+            <td>{{ item.product.price }}</td>
+            <td>
+                <input type="number" class="form-control quantity-input" data-item-id="{{ item.id }}" value="{{ item.quantity }}" min="1">
+            </td>
+            <td class="item-total">{{ item.product.price * item.quantity }}</td>
+            <td>
+                <button class="btn btn-danger" onclick="deleteCartItem({{ item.id }})">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Botón para continuar con el pago -->
+<a href="{{ url_for('checkout') }}" class="btn btn-primary">Continuar con el pago</a>
+
+<!-- Botón para continuar comprando, redirige a la página principal -->
+<a href="{{ url_for('home') }}" class="btn btn-secondary">Continuar comprando</a>
+
+
+<script>
+    // Función para actualizar el total del carrito
+    function updateCartTotal() {
+        let totalOrder = 0;
+
+        // Recorre todas las filas y suma el total de cada artículo
+        document.querySelectorAll('.item-total').forEach(itemTotalCell => {
+            totalOrder += parseFloat(itemTotalCell.innerText);
+        });
+
+        // Actualiza el total de la orden
+        document.getElementById('total-price').innerText = totalOrder.toFixed(2);
+    }
+
+    // Actualizar la cantidad de un producto en el carrito
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', function() {
+            const itemId = this.getAttribute('data-item-id');
+            const newQuantity = this.value;
+
+            // Hacer la solicitud AJAX para actualizar la cantidad
+            fetch(`/api/cart_items/${itemId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ quantity: newQuantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Cart item updated') {
+                    // Actualizar el total por artículo
+                    const itemRow = document.querySelector(`tr[data-item-id="${itemId}"]`);
+                    const itemPrice = parseFloat(itemRow.querySelector('td:nth-child(3)').innerText);
+                    const itemTotal = itemPrice * newQuantity;
+                    itemRow.querySelector('.item-total').innerText = itemTotal.toFixed(2);
+
+                    // Actualizar el total de la orden
+                    updateCartTotal();
+                } else {
+                    alert('Error al actualizar la cantidad');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Función para eliminar un item del carrito
+    function deleteCartItem(itemId) {
+        if (confirm('¿Estás seguro de que deseas eliminar este producto del carrito?')) {
+            fetch(`/api/cart_items/${itemId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Cart item deleted') {
+                    alert('Producto eliminado');
+                    window.location.reload();  // Recargar la página para reflejar los cambios
+                } else {
+                    alert('Error al eliminar el producto');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    }
+
+    // Inicializar el total de la orden al cargar la página
+    updateCartTotal();
+</script>
+
+{% endblock %}
+

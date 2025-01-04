@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Ver Stock Bajo{% endblock %}
+
+{% block content %}
+<h1>Productos con Stock Bajo</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>SKU</th>
+            <th>Nombre</th>
+            <th>Stock</th>
+            <th>Umbral</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.id }}</td>
+            <td>{{ product.sku }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.stock }}</td>
+            <td>{{ product.stock_threshold }}</td>
+            <td>
+                <a href="{{ url_for('admin_edit_product', product_id=product.id) }}" class="btn btn-primary">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+

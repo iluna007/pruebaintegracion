@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Admin Dashboard</h1>
+    <div class="row">
+        <!-- Tarjeta de estadísticas de productos -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Productos</h5>
+                    <p class="card-text">{{ total_products }} productos en total</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tarjeta de estadísticas de órdenes -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Órdenes pendientes</h5>
+                    <p class="card-text">{{ pending_orders }} órdenes pendientes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta de estadísticas de usuarios -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Usuarios registrados</h5>
+                    <p class="card-text">{{ total_users }} usuarios en total</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta de estadísticas de stock bajo -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Productos con stock bajo</h5>
+                    <p class="card-text">{{ low_stock_products }} productos con stock bajo</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enlaces a otras secciones del panel -->
+    <div class="row mt-4">
+        <!-- Enlace para gestionar productos -->
+        <div class="col-md-3">
+            <a class="btn btn-outline-primary w-100" href="{{ url_for('admin_products') }}">Gestionar productos</a>
+        </div>
+
+        <!-- Enlace para gestionar órdenes -->
+        <div class="col-md-3">
+            <a class="btn btn-outline-success w-100" href="{{ url_for('admin_orders') }}">Gestionar órdenes</a>
+        </div>
+
+        <!-- Enlace para gestionar usuarios -->
+        <div class="col-md-3">
+            <a class="btn btn-outline-info w-100" href="{{ url_for('admin_users') }}">Gestionar usuarios</a>
+        </div>
+
+        <!-- Enlace para ver stock bajo -->
+        <div class="col-md-3">
+            <a class="btn btn-outline-danger w-100" href="{{ url_for('admin_stock') }}">Ver stock bajo</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

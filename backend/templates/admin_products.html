@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Administrar productos{% endblock %}
+
+{% block content %}
+<h1>Crear nuevo producto</h1>
+
+<!-- Botón para mostrar/ocultar el formulario de agregar producto -->
+<button class="btn btn-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#createProductForm" aria-expanded="false" aria-controls="createProductForm">
+    Agregar nuevo producto
+</button>
+
+<!-- Formulario colapsado para agregar un nuevo producto -->
+<div class="collapse" id="createProductForm">
+    <div class="card card-body">
+        <form id="create-product-form" method="POST">
+            <div class="mb-3">
+                <label for="sku" class="form-label">SKU</label>
+                <input type="text" class="form-control" id="sku" name="sku" required>
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Descripción</label>
+                <textarea class="form-control" id="description" name="description" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Precio</label>
+                <input type="number" class="form-control" id="price" name="price" required>
+            </div>
+            <div class="mb-3">
+                <label for="stock" class="form-label">Stock</label>
+                <input type="number" class="form-control" id="stock" name="stock" required>
+            </div>
+            <div class="mb-3">
+                <label for="stock_threshold" class="form-label">Umbral de stock</label>
+                <input type="number" class="form-control" id="stock_threshold" name="stock_threshold" required>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Categoría</label>
+                <input type="text" class="form-control" id="category" name="category" required>
+            </div>
+            <button type="submit" class="btn btn-success">Agregar producto</button>
+        </form>
+    </div>
+</div>
+
+<hr>
+
+<!-- Lista de productos existentes -->
+<h2>Lista de productos</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>SKU</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Umbral de stock</th>
+            <th>Categoría</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.sku }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ product.stock }}</td>
+            <td>{{ product.stock_threshold }}</td>
+            <td>{{ product.category }}</td>
+            <td>
+                <!-- Enlace para editar el producto -->
+                <a href="{{ url_for('admin_edit_product', product_id=product.id) }}" class="btn btn-primary">Editar</a>
+
+                <!-- Botón para eliminar el producto con AJAX -->
+                <button class="btn btn-danger" onclick="deleteProduct({{ product.id }})">Eliminar</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Script para agregar productos mediante AJAX -->
+<script>
+document.getElementById('create-product-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    let formData = {
+        sku: document.getElementById('sku').value,
+        name: document.getElementById('name').value,
+        description: document.getElementById('description').value,
+        price: document.getElementById('price').value,
+        stock: document.getElementById('stock').value,
+        stock_threshold: document.getElementById('stock_threshold').value,
+        category: document.getElementById('category').value
+    };
+
+    fetch('/api/products', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.id) {
+            alert('Producto agregado correctamente');
+            window.location.reload();  // Recargar la página para mostrar el nuevo producto
+        } else {
+            alert('Error al agregar el producto');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+function deleteProduct(productId) {
+    if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+        fetch(`/api/products/${productId}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Product deleted') {
+                alert('Producto eliminado correctamente');
+                window.location.reload();  // Recargar la página para reflejar los cambios
+            } else {
+                alert('Error al eliminar el producto');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+</script>
+{% endblock %}
+

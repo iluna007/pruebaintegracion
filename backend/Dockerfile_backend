@@ -1,0 +1,24 @@
+# Usa una imagen base oficial de Python
+FROM python:3.11-slim
+
+# Establece el directorio de trabajo
+# Establece el directorio de trabajo dentro del contenedor
+WORKDIR /backend
+
+# Copia el archivo de requerimientos y lo instala
+# Copia el archivo de requerimientos al contenedor
+COPY requirements.txt requirements.txt
+# Instala las dependencias especificadas en requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copia el código de la aplicación
+# Copia todo el contenido de la carpeta actual al directorio de trabajo del contenedor
+COPY . .
+
+# Expone el puerto 5000 para Flask
+# Expone el puerto 5000 para que Flask sea accesible
+EXPOSE 5000
+
+# Comando para correr la aplicación
+# Comando para correr la aplicación Flask
+CMD ["flask", "run", "--host=0.0.0.0"]

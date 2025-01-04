@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Órdenes{% endblock %}
+
+{% block content %}
+<h1>Gestión de Órdenes</h1>
+
+<!-- Filtros por estado y estado de pago -->
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link {% if request.args.get('status') == 'all' or not request.args.get('status') %}active{% endif %}" 
+           href="{{ url_for('admin_orders', status='all') }}">Todas</a>
+    </li>
+    <li class="nav-item">
+	<a class="nav-link {% if request.args.get('status') == 'pending' %}active{% endif %}" 
+	   href="{{ url_for('admin_orders', status='pending') }}">Pendientes</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link {% if request.args.get('status') == 'packaged' %}active{% endif %}" 
+           href="{{ url_for('admin_orders', status='packaged') }}">Empaquetadas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.args.get('status') == 'shipped' %}active{% endif %}" 
+           href="{{ url_for('admin_orders', status='shipped') }}">Enviadas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.args.get('status') == 'complete' %}active{% endif %}" 
+           href="{{ url_for('admin_orders', status='complete') }}">Completadas</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link {% if request.args.get('is_paid') == 'false' %}active{% endif %}" 
+           href="{{ url_for('admin_orders', is_paid='false') }}">No Pagadas</a>
+    </li>
+</ul>
+
+<!-- Tabla de Órdenes -->
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Pagada</th>
+            <th>Cambiar Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.user.username }}</td>
+            <td>${{ order.total_amount }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ 'Sí' if order.is_paid else 'No' }}</td>
+            
+            <!-- Formulario para cambiar el estado de la orden -->
+            <td>
+                <form action="{{ url_for('update_order_status', order_id=order.id) }}" method="POST">
+                    <select name="status" class="form-select" onchange="this.form.submit()">
+                        <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pendiente</option>
+                        <option value="packaged" {% if order.status == 'packaged' %}selected{% endif %}>Empaquetada</option>
+                        <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Enviada</option>
+                        <option value="complete" {% if order.status == 'complete' %}selected{% endif %}>Completada</option>
+                    </select>
+                </form>
+            </td>
+
+            <!-- Botón para ver los detalles de la orden -->
+            <td>
+                <a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn btn-primary">Ver Detalles</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalles del Producto{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Flash message container -->
+    <div id="flash-message" class="alert alert-danger d-none" role="alert">
+        <!-- Aquí aparecerán los mensajes flash en caso de error -->
+    </div>
+
+    <!-- Detalles del producto se cargarán aquí dinámicamente -->
+    <div id="product-details" class="row"></div>
+
+    <!-- Formulario para añadir al carrito -->
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <h2>Añadir al carrito</h2>
+            <form id="add-to-cart-form" class="d-none">
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Cantidad</label>
+                    <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1" required>
+                </div>
+                <button type="submit" class="btn btn-success">Añadir al carrito</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Script para cargar datos del producto y agregarlo al carrito -->
+<script>
+    const productId = {{ product_id }};
+    //const userId = {{ current_user.id }};  // Obtener el ID del usuario autenticado
+    const userId = {{ current_user.id if current_user.is_authenticated else 'null' }};
+
+
+    // Función para mostrar mensajes flash
+    function showFlashMessage(message, type = 'danger') {
+        const flashMessageDiv = document.getElementById('flash-message');
+        flashMessageDiv.classList.remove('d-none', 'alert-success', 'alert-danger');
+        flashMessageDiv.classList.add(`alert-${type}`);
+        flashMessageDiv.innerText = message;
+    }
+
+    // Función para cargar los detalles del producto usando fetch
+    function loadProductDetails() {
+        fetch(`/api/products/${productId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al cargar los detalles del producto.');
+            }
+            return response.json();
+        })
+        .then(product => {
+            const productDetailsDiv = document.getElementById('product-details');
+            const form = document.getElementById('add-to-cart-form');
+
+            // Construcción de HTML para las imágenes del producto dentro de un carrusel de Bootstrap           
+            let imagesHtml = '';
+            if (product.images && product.images.length > 0) {
+                imagesHtml = `
+		<div id="productImageCarousel" class="carousel slide" data-bs-interval="false"> <!-- Sin cambio automático -->
+			    <!-- Indicadores -->
+			    <div class="carousel-indicators">
+				${product.images.map((_, index) => `
+				    <button type="button" data-bs-target="#productImageCarousel" data-bs-slide-to="${index}" class="${index === 0 ? 'active' : ''}" aria-current="${index === 0 ? 'true' : 'false'}" aria-label="Slide ${index + 1}"></button>
+				`).join('')}
+			    </div>
+			    <!-- Carrusel -->
+			    <div class="carousel-inner">
+				${product.images.map((image, index) => `
+				    <div class="carousel-item ${index === 0 ? 'active' : ''}">
+				        <img src="${image.url}" class="d-block w-100" alt="${product.name}">
+				    </div>
+				`).join('')}
+			    </div>
+			    <!-- Controles de navegación -->
+			    <button class="carousel-control-prev" type="button" data-bs-target="#productImageCarousel" data-bs-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Previous</span>
+			    </button>
+			    <button class="carousel-control-next" type="button" data-bs-target="#productImageCarousel" data-bs-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Next</span>
+			    </button>
+		</div>
+                `;
+            } else {
+
+            
+            /*let imagesHtml = '';
+            if (product.images && product.images.length > 0) {
+                imagesHtml = `
+                    <div id="productImageCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            ${product.images.map((image, index) => `
+                                <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                    <img src="${image.url}" class="d-block w-100" alt="${product.name}">
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#productImageCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#productImageCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                `;
+            } else { */
+                imagesHtml = `
+                    <div>
+                        <img src="https://via.placeholder.com/500x300" class="img-fluid" alt="${product.name}">
+                    </div>
+                `;
+            }
+
+            // Renderizar los detalles del producto junto con el carrusel
+            productDetailsDiv.innerHTML = `
+                <div class="col-md-6">
+                    ${imagesHtml}
+                </div>
+                <div class="col-md-6">
+                    <h1>${product.name}</h1>
+                    <p>${product.description}</p>
+                    <p><strong>Precio: $${product.price}</strong></p>
+                    <p><strong>Stock disponible: ${product.stock}</strong></p>
+                </div>
+            `;
+
+            // Mostrar el formulario si hay stock disponible
+            if (product.stock > 0) {
+                form.classList.remove('d-none');
+                document.getElementById('quantity').setAttribute('max', product.stock);
+            } else {
+                showFlashMessage('Producto temporalmente fuera de stock', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showFlashMessage('Error al cargar los detalles del producto.');
+        });
+    }
+
+    // Función para agregar el producto al carrito
+	document.getElementById('add-to-cart-form').addEventListener('submit', function(event) {
+    	event.preventDefault();
+
+    	if (!userId || userId === 'null') {
+        	showFlashMessage('Debes crear una cuenta o iniciar sesión para agregar productos al carrito.', 'danger');
+        	setTimeout(() => {
+            	window.location.href = '/signin';  // Redirigir al login/signup
+        	}, 1500);
+        	return;
+    	}
+
+        const quantity = document.getElementById('quantity').value;
+        const maxQuantity = document.getElementById('quantity').max;
+
+        if (parseInt(quantity) > parseInt(maxQuantity)) {
+            showFlashMessage(`Solo puedes agregar hasta ${maxQuantity} unidades.`, 'danger');
+            return;
+        }
+
+        fetch(`/api/cart/user/${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.id) {
+                    addProductToCart(data.id, quantity);
+                } else {
+                    createCartAndAddProduct(quantity);
+                }
+            })
+            .catch(error => {
+                console.error('Error al obtener el carrito:', error);
+                createCartAndAddProduct(quantity);  // Intentar crear el carrito si hay un error
+            });
+    });
+
+    function createCartAndAddProduct(quantity) {
+        fetch('/api/cart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                addProductToCart(data.id, quantity);
+            } else {
+                showFlashMessage('Error al crear el carrito.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error al crear el carrito:', error);
+            showFlashMessage('Error al crear el carrito.', 'danger');
+        });
+    }
+
+    function addProductToCart(cartId, quantity) {
+        fetch(`/api/cart_items`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                cart_id: cartId,
+                product_id: productId,
+                quantity: parseInt(quantity)
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                showFlashMessage('Producto añadido al carrito', 'success');
+                setTimeout(() => {
+                    window.location.href = '/cart';  // Redirigir al carrito después de añadir el producto
+                }, 1500);
+            } else {
+                showFlashMessage('Error al agregar el producto al carrito.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error al agregar al carrito:', error);
+            showFlashMessage('Error al agregar al carrito.', 'danger');
+        });
+    }
+
+    // Cargar los detalles del producto cuando la página se carga
+    document.addEventListener('DOMContentLoaded', loadProductDetails);
+</script>
+{% endblock %}
+
