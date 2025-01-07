@@ -6,5 +6,14 @@ export default defineConfig({
 	server: {
 		port: 5173,
 		host: true,
+		hmr: {
+			overlay: false, // Opcional: deshabilita superposición de errores
+		},
+	},
+	resolve: {
+		alias: {
+			// Alias para Bootstrap en node_modules
+			bootstrap: "/node_modules/bootstrap",
+		},
 	},
 });
